@@ -52,3 +52,20 @@ export function getCapturePublicUrl(storagePath: string) {
 
   return data.publicUrl;
 }
+
+export async function analyzeCaptures(captureIds: string[]) {
+  const { data, error } = await supabase.functions.invoke(
+    "analyze-captures",
+    {
+      body: {
+        captureIds,
+      },
+    }
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}

@@ -12,6 +12,10 @@ type ArchiveCapture = {
   storage_path: string;
   status: string;
   created_at: string;
+  title: string | null;
+  context_summary: string | null;
+  concepts: string[] | null;
+  extracted_text: string | null;
 };
 
 export default function Archive() {
@@ -143,28 +147,51 @@ export default function Archive() {
 
           <div className="archive-capture-grid">
             {captures.map((capture, index) => (
-              <article
-                className="archive-capture"
-                key={capture.id}
-              >
-                <div className="archive-capture-image">
-                  <img
-                    src={getCapturePublicUrl(capture.storage_path)}
-                    alt={capture.file_name}
-                  />
-                </div>
+  <article
+    className="archive-capture"
+    key={capture.id}
+  >
+    <div className="archive-capture-image">
+      <img
+        src={getCapturePublicUrl(capture.storage_path)}
+        alt={capture.title ?? capture.file_name}
+      />
 
-                <div className="archive-capture-meta">
-                  <span>
-                    CA.{String(index + 1).padStart(3, "0")}
-                  </span>
+      <span
+        className={`archive-capture-status archive-capture-status-${capture.status}`}
+      >
+        {capture.status}
+      </span>
+    </div>
 
-                  <span>{capture.status}</span>
-                </div>
+    <div className="archive-capture-meta">
+      <span>
+        CA.{String(index + 1).padStart(3, "0")}
+      </span>
 
-                <p>{capture.file_name}</p>
-              </article>
-            ))}
+      <span>
+        {new Date(capture.created_at).toLocaleDateString()}
+      </span>
+    </div>
+
+    <h2>
+      {capture.title ?? "Unprocessed fragment"}
+    </h2>
+
+    <p className="archive-capture-summary">
+      {capture.context_summary ??
+        "Context analysis has not been completed for this capture."}
+    </p>
+
+    {capture.concepts && capture.concepts.length > 0 && (
+      <div className="archive-capture-concepts">
+        {capture.concepts.slice(0, 4).map((concept) => (
+          <span key={concept}>{concept}</span>
+        ))}
+      </div>
+    )}
+  </article>
+))}
           </div>
         </section>
       )}

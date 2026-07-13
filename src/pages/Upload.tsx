@@ -1,4 +1,7 @@
-import { uploadCapture } from "../services/archive";
+import {
+  analyzeCaptures,
+  uploadCapture,
+} from "../services/archive";
 import {
   ArrowLeft,
   ArrowRight,
@@ -69,21 +72,27 @@ export default function Upload() {
   setUploadError(null);
 
   try {
+    const uploadedCaptureIds: string[] = [];
+
     for (const capture of captures) {
-      await uploadCapture(capture.file);
+      const uploadedCapture = await uploadCapture(capture.file);
+
+      uploadedCaptureIds.push(uploadedCapture.id);
 
       setUploadedCount((currentCount) => currentCount + 1);
     }
 
+    await analyzeCaptures(uploadedCaptureIds);
+
     clearCaptures();
     navigate("/");
   } catch (error) {
-    console.error("Capture upload failed:", error);
+    console.error("Capture processing failed:", error);
 
     setUploadError(
       error instanceof Error
         ? error.message
-        : "The capture batch could not be stored."
+        : "The capture batch could not be processed."
     );
   } finally {
     setIsProcessing(false);
