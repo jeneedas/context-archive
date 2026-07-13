@@ -229,6 +229,38 @@
   animation-delay: -3s;
 }
 
+.archive-signal {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.archive-signal-pink {
+  width: 7px;
+  height: 7px;
+  right: 17%;
+  top: 31%;
+  border-radius: 50%;
+  background: var(--archive-pink);
+  box-shadow:
+    0 0 0 7px var(--archive-pink-faint),
+    0 0 28px var(--archive-pink-soft);
+  animation: archive-signal-pulse 4.8s ease-in-out infinite;
+}
+
+@keyframes archive-signal-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @keyframes fragment-drift {
   from {
     translate: 0 0;

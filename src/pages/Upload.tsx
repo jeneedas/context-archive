@@ -1,3 +1,4 @@
+import { uploadCapture } from "../services/archive";
 import {
   ArrowLeft,
   ArrowRight,
@@ -19,6 +20,9 @@ export default function Upload() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [isDragging, setIsDragging] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [uploadedCount, setUploadedCount] = useState(0);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const {
     captures,
@@ -55,14 +59,36 @@ export default function Upload() {
     acceptFiles(files);
   };
 
-  const handleStartProcessing = () => {
-    if (captures.length === 0) {
-      return;
+  const handleStartProcessing = async () => {
+  if (captures.length === 0 || isProcessing) {
+    return;
+  }
+
+  setIsProcessing(true);
+  setUploadedCount(0);
+  setUploadError(null);
+
+  try {
+    for (const capture of captures) {
+      await uploadCapture(capture.file);
+
+      setUploadedCount((currentCount) => currentCount + 1);
     }
 
-    console.log("Captures ready for processing:", captures);
-  };
+    clearCaptures();
+    navigate("/");
+  } catch (error) {
+    console.error("Capture upload failed:", error);
 
+    setUploadError(
+      error instanceof Error
+        ? error.message
+        : "The capture batch could not be stored."
+    );
+  } finally {
+    setIsProcessing(false);
+  }
+};
   return (
     <main className="upload-page">
       <header className="archive-header">
@@ -263,13 +289,23 @@ export default function Upload() {
                 </p>
               </div>
 
+
+              {uploadError && (
+  <p className="capture-upload-error">
+    {uploadError}
+  </p>
+)}
               <button
-                className="process-captures-button"
-                onClick={handleStartProcessing}
-              >
-                Process batch
-                <ArrowRight size={16} strokeWidth={1.5} />
-              </button>
+  className="process-captures-button"
+  onClick={handleStartProcessing}
+  disabled={isProcessing}
+>
+  {isProcessing
+    ? `Archiving ${uploadedCount} / ${captures.length}`
+    : "Process batch"}
+
+  <ArrowRight size={16} strokeWidth={1.5} />
+</button>
             </div>
           </div>
         )}
