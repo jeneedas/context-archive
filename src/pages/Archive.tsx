@@ -23,6 +23,9 @@ export default function Archive() {
 
   const [captures, setCaptures] = useState<ArchiveCapture[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [selectedCapture, setSelectedCapture] =
+  useState<ArchiveCapture | null>(null);
   const [archiveError, setArchiveError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -146,10 +149,11 @@ export default function Archive() {
           </div>
 
           <div className="archive-capture-grid">
-            {captures.map((capture, index) => (
+     {captures.map((capture, index) => (
   <article
     className="archive-capture"
     key={capture.id}
+    onClick={() => setSelectedCapture(capture)}
   >
     <div className="archive-capture-image">
       <img
