@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import CaptureDetail from "../components/CaptureDetail";
 import {
   getCapturePublicUrl,
   getCaptures,
@@ -199,6 +200,13 @@ export default function Archive() {
           </div>
         </section>
       )}
+
+     {selectedCapture && (
+ <CaptureDetail
+  capture={selectedCapture}
+  onClose={() => setSelectedCapture(null)}
+/>
+)}
     </main>
   );
 }
